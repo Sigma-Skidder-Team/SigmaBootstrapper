@@ -25,7 +25,7 @@ public class JelloBootstrap {
     public JelloBootstrap(String[] args) {
         File file = new File("SigmaJelloPrelauncher.jar");
         this.launchArgs = args;
-        this.downloadFileWithSHA1Check("https://github.com/Sigma-Skidder-Team/SigmaPrelauncher/releases/download/1.0/SigmaJelloPrelauncher.jar", file);
+        this.downloadFileWithSHA1Check("https://jelloprg.sigmaclient.cloud/download/prelauncher/", file);
         this.launchPrelauncher(file);
     }
 
