@@ -1,5 +1,9 @@
 package info.sigmaclient.jellobootstrap;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,12 +19,14 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 
 public class JelloBootstrap {
     private String[] launchArgs;
     private char[] hexArray;
 
     public static void main(String[] args) {
+        disableSslVerification();
         new JelloBootstrap(args);
     }
 
@@ -128,5 +134,27 @@ public class JelloBootstrap {
             hexChars[j * 2 + 1] = this.hexArray[v & 0xF];
         }
         return new String(hexChars);
+    }
+
+    public static void disableSslVerification() {
+        try {
+            TrustManager[] trustAllCertificates = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return null;
+                        }
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        }
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        }
+                    }
+            };
+
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCertificates, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
